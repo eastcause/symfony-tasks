@@ -1,0 +1,133 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Podgląd projektu{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/scripts.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/fontello.css') }}">
+
+    <style>
+        .newbody {
+            margin-top: 10px;
+            background-color: #FF4B67;
+        }
+        .inbody {
+            margin-top: 10px;
+            background-color: #FFE407;
+        }
+        .endbody {
+            margin-top: 10px;
+            background-color: #26CF81;
+        }
+        .comment-block p {
+            color: white;
+        }
+
+        .tasks {
+            padding-top: 10px;
+            padding-bottom: 3px;
+        }
+    </style>
+{% endblock %}
+
+{% block container %}
+
+    <h1 class="h3 mb-3 font-weight-normal logo">Podgląd projektu: {{ project }}</h1>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="bg-danger text-white rounded mx-3 my-3 rounded tasks">
+                <h5 class="text-center">Nowe<a><i class="demo-icon icon-plus-circle"></i></a></h5>
+                <div class="bg-white">
+                    {% for task in new %}
+                        <div class="comment-block rounded p-1 newbody" style="overflow: hidden; word-wrap: break-word;">
+                            <p class="text-black">{{ task.description }}</p>
+                            <div class="d-flex justify-content-end">
+                                <a onclick="window.location.href = '{{ path('app_task_move', {'id': task.id, 'status': 1}) }}'" title="Przenieś do `W trakcie`"><i class="demo-icon icon-network"></i></a>
+                                <a onclick="window.location.href = '{{ path('app_task_move', {'id': task.id, 'status': 2}) }}'" title="Przenieś do `Ukończone`"><i class="demo-icon icon-hourglass-3"></i></a>
+                                <a onclick="window.location.href = '{{ path('app_task_delete', {'id': task.id}) }}'" title="Usuń"><i class="demo-icon icon-trash-empty"></i></a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <a onclick="createTask(0)">Kliknij, aby stworzyć nowe zadanie<i class="demo-icon icon-doc-new"></i></a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="bg-warning text-white rounded mx-3 my-3 rounded tasks">
+                <h5 class="text-center">W trakcie<a><i class="demo-icon icon-network"></i></a></h5>
+                <div class="bg-white">
+                    {% for task in work %}
+                        <div class="comment-block rounded p-1 inbody" style="overflow: hidden; word-wrap: break-word;">
+                            <p class="text-black">{{ task.description }}</p>
+                            <div class="d-flex justify-content-end">
+                                <a onclick="window.location.href = '{{ path('app_task_move', {'id': task.id, 'status': 0}) }}'" title="Przenieś do `Nowe`"><i class="demo-icon icon-plus-circle"></i></a>
+                                <a onclick="window.location.href = '{{ path('app_task_move', {'id': task.id, 'status': 2}) }}'" title="Przenieś do `Ukończone`"><i class="demo-icon icon-hourglass-3"></i></a>
+                                <a onclick="window.location.href = '{{ path('app_task_delete', {'id': task.id}) }}'" title="Usuń"><i class="demo-icon icon-trash-empty"></i></a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <a onclick="createTask(1)">Kliknij, aby stworzyć nowe zadanie<i class="demo-icon icon-doc-new"></i></a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="bg-success text-white rounded mx-3 my-3 rounded tasks">
+                <h5 class="text-center">Ukończone<a><i class="demo-icon icon-hourglass-3"></i></a></h5>
+                <div class="bg-white">
+                    {% for task in end %}
+                        <div class="comment-block rounded p-1 endbody " style="overflow: hidden; word-wrap: break-word;">
+                            <p class="text-black">{{ task.description }}</p>
+                            <div class="d-flex justify-content-end">
+                                <a onclick="window.location.href = '{{ path('app_task_move', {'id': task.id, 'status': 0}) }}'" title="Przenieś do `Nowe`"><i class="demo-icon icon-plus-circle"></i></a>
+                                <a onclick="window.location.href = '{{ path('app_task_move', {'id': task.id, 'status': 1}) }}'" title="Przenieś do `W trakcie`"><i class="demo-icon icon-network"></i></a>
+                                <a onclick="window.location.href = '{{ path('app_task_delete', {'id': task.id}) }}'" title="Usuń"><i class="demo-icon icon-trash-empty"></i></a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <a onclick="createTask(2)">Kliknij, aby stworzyć nowe zadanie<i class="demo-icon icon-doc-new"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="newTaskModal" tabindex="-1" aria-labelledby="newTaskModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newTaskModalLabel">Tworzenie zadania</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                {{ form_start(createForm) }}
+                    <div class="modal-body" id="newTaskModalDescription">
+                        {{ form_row(createForm.text) }}
+                        {{ form_row(createForm.status) }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger" id="createButton">Stwórz</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Zamknij</button>
+                    </div>
+                {{ form_end(createForm) }}
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function createTask(status) {
+            document.getElementById("newTaskModalLabel").innerHTML = "Tworzenie taska ";
+            if (status === 0) {
+                document.getElementById("newTaskModalLabel").innerHTML += '<i class="demo-icon icon-plus-circle"></i>';
+            } else if (status === 1) {
+                document.getElementById("newTaskModalLabel").innerHTML += '<i class="demo-icon icon-network"></i>';
+            } else {
+                document.getElementById("newTaskModalLabel").innerHTML += '<i class="demo-icon icon-hourglass-3"></i>';
+            }
+            document.getElementById("create_task_form_status").value = '' + status;
+            let modal = new bootstrap.Modal(document.getElementById('newTaskModal'));
+            modal.show();
+        }
+    </script>
+{% endblock %}

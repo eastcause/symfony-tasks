@@ -1,0 +1,7 @@
+
+.icon-trash-empty:before { content: '\e800'; } /* '' */
+.icon-attach:before { content: '\e801'; } /* '' */
+.icon-plus-circle:before { content: '\e802'; } /* '' */
+.icon-network:before { content: '\e803'; } /* '' */
+.icon-doc-new:before { content: '\e804'; } /* '' */
+.icon-hourglass-3:before { content: '\f253'; } /* '' */

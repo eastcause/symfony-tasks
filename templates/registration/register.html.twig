@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Rejestracja{% endblock %}
+
+{% block container %}
+    <div class="d-flex justify-content-between">
+        <h1 class="h3 mb-3 font-weight-normal">Rejestracja</h1>
+        <button class="btn btn-primary" onclick="window.location.href = '{{ path('app_login') }}'">Logowanie</button>
+    </div>
+
+
+    {{ form_start(registrationForm) }}
+        {{ form_row(registrationForm.email, {
+            label: 'Email'
+        }) }}
+        {{ form_row(registrationForm.plainPassword) }}
+        {{ form_row(registrationForm.agreeTerms, {
+            label: 'Akceptuje warunki'
+        }) }}
+
+        <button type="submit" class="btn btn-primary mb-1">Zarejestruj się</button>
+
+    {{ form_end(registrationForm) }}
+{% endblock %}

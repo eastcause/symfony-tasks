@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Strona główna{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/scripts.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/fontello.css') }}">
+{% endblock %}
+
+{% block container %}
+
+    <p class="desc">
+        Ta strona umożliwia użytkownikom tworzenie, usuwanie i edytowanie zadań. Dzięki temu narzędziu można łatwo zorganizować swoje zadania i przypomnienia, co pozwala na efektywniejsze zarządzanie czasem i zwiększenie produktywności. Strona jest łatwa w użyciu i dostępna dla każdego.
+    </p>
+
+    <div class="mt-5 mb-3">
+        <h1 class="h6 mb-3 font-weight-normal">Stwórz nowy projekt</h1>
+        <div class="color-picker" data-mdb-picker="color-picker"></div>
+        {{ form_start(form_task_row) }}
+            {{ form_row(form_task_row.description) }}
+
+
+            <button type="submit" class="btn btn-primary mb-1">Stwórz</button>
+        {{ form_end(form_task_row) }}
+    </div>
+
+    {% for flash in app.flashes('success') %}
+        <div class="alert alert-success " role="alert">
+            {{flash}}
+        </div>
+    {% endfor %}
+
+    {% for flash in app.flashes('error') %}
+        <div class="alert alert-danger" role="alert">
+            <strong>Odmowa!</strong> {{flash}}
+        </div>
+    {% endfor %}
+
+    <div class="mt-5 mb-5">
+        <h1 class="h6 mb-3 font-weight-normal">Twoje projekty:</h1>
+    </div>
+
+    <div class="row mb-5">
+        {% set i = 1 %}
+        {% for row in task_rows %}
+            {% if (i % 3 == 1) %}
+                <div class="col bg-danger text-white rounded mx-3 my-3 d-flex justify-content-between">
+            {% elseif (i % 3 == 2) %}
+                <div class="col bg-primary text-white rounded mx-3 my-3 d-flex justify-content-between">
+            {% else %}
+                <div class="col bg-success text-white rounded mx-3 my-3 d-flex justify-content-between">
+            {% endif %}
+                <h6>{{ row.description }}</h6>
+                <div class="icons">
+                    <a onclick="window.location.href = 'task/{{ row.id }}'" title="Kliknij, aby edytować"><i class="demo-icon icon-attach"></i></a>
+                    <a onclick="deleteModal({{ row.id }}, '{{ row.description }}')" title="Kliknij, aby usunąć"><i class="demo-icon icon-trash-empty"></i></a>
+                </div>
+            </div>
+            {% set i = i + 1 %}
+        {% endfor %}
+     </div>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Usuwanie projektu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="deleteModalDescription">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="deleteButton" onclick="window.location.href = '#'">Potwierdzam</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Zamknij</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function deleteModal(id, name) {
+            document.getElementById('deleteModalDescription').innerHTML = 'Czy na pewno chcesz usunąc projekt <strong>' + name + '</strong>'
+            document.getElementById('deleteButton').onclick = function () {
+                window.location.href = 'delete/' + id;
+            }
+            let modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            modal.show();
+        }
+    </script>
+
+
+{% endblock %}
